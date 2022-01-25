@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import TasksService from "@/api/TasksAPI";
 export default {
   name: "AddTaskForm",
   components: {},
@@ -104,23 +105,24 @@ export default {
     },
     onClickSaveForm() {
       if (this.$refs.form.validate() && !this.isFormEdit) {
-        var self = this;
-        setTimeout(function () {
-          self.$constantes.util.toastSuccess(
-            self.$constantes.interfaz.MESSAGE_SUCCESS_CREATE
-          );
-          self.onClickCancelForm();
-        }, 3000);
+        this.registerTask();
       }
       if (this.$refs.form.validate() && this.isFormEdit) {
-        var self = this;
-        setTimeout(function () {
-          self.$constantes.util.toastSuccess(
-            self.$constantes.interfaz.MESSAGE_SUCCESS_UPDATE
-          );
-          self.onClickCancelForm();
-        }, 3000);
+        this.updateTask();
       }
+    },
+
+    async registerTask() {
+      const params = new URLSearchParams();
+      Object.keys(this.taskForm).forEach((key) => {
+        params.append(key, this.taskForm[key]);
+      });
+
+      TasksService.registrar(params);
+      this.onClickCancelForm();
+    },
+    async updateTask() {
+      this.onClickCancelForm();
     },
     loadInformation() {
       this.taskForm = this.task;

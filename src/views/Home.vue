@@ -1,18 +1,14 @@
 <template>
   <base-template>
     <template #sectionListTasks>
-      <v-card
-        shaped
-        elevation="6"
-        style="max-height: 500px; overflow: auto"
-      >
+      <v-card shaped elevation="6" style="max-height: 500px; overflow: auto">
         <v-list dense>
           <v-subheader>Todo</v-subheader>
           <v-list-item-group
             v-model="itemListSelected"
             active-class="indigo--text text--darken-5"
           >
-            <template v-for="(task, index) in tasks">
+            <template v-for="(task, index) in getTasks">
               <v-list-item :key="task.title" @click="onClickDetailTask(task)">
                 <v-list-item-action>
                   <v-icon
@@ -106,6 +102,8 @@
 import BaseTemplate from "@/components/layouts/BaseTemplate.vue";
 import AddTaskForm from "@/components/AddTaskForm";
 import DetailTaskForm from "@/components/DetailTaskForm";
+import TasksService from "@/api/TasksAPI";
+
 export default {
   name: "Home",
 
@@ -121,6 +119,8 @@ export default {
     dialogDetailTask: false,
     dialogDelete: false,
     isFormEdit: false,
+
+    tasksData: [],
     tasks: [
       {
         title: "Hacer front-end",
@@ -160,7 +160,7 @@ export default {
         task_id: 4,
       },
       {
-        title: "TAREA 4",
+        title: "TAREA 4123123",
         is_completed: false,
         due_date: "2022-01-15",
         comments: "Realizar el front end para pasar la prueba final",
@@ -169,7 +169,7 @@ export default {
         task_id: 5,
       },
       {
-        title: "TAREA 4",
+        title: "TAREA 41231234",
         is_completed: false,
         due_date: "2022-01-15",
         comments: "Realizar el front end para pasar la prueba final",
@@ -178,7 +178,7 @@ export default {
         task_id: 6,
       },
       {
-        title: "TAREA 4",
+        title: "TAREA 41235235",
         is_completed: false,
         due_date: "2022-01-15",
         comments: "Realizar el front end para pasar la prueba final",
@@ -187,7 +187,7 @@ export default {
         task_id: 7,
       },
       {
-        title: "TAREA 4",
+        title: "TAREA 44356",
         is_completed: false,
         due_date: "2022-01-15",
         comments: "Realizar el front end para pasar la prueba final",
@@ -196,7 +196,7 @@ export default {
         task_id: 8,
       },
       {
-        title: "TAREA 4",
+        title: "TAREA 674",
         is_completed: false,
         due_date: "2022-01-15",
         comments: "Realizar el front end para pasar la prueba final",
@@ -206,8 +206,14 @@ export default {
       },
     ],
   }),
-  mounted() {},
-  computed: {},
+  mounted() {
+    this.getAllTasks();
+  },
+  computed: {
+     getTasks() {
+      return this.tasksData;
+    },
+  },
   methods: {
     onClickNewTask() {
       this.dialogTask = true;
@@ -226,6 +232,10 @@ export default {
     },
     onClickDeleteTask() {
       this.dialogDelete = true;
+    },
+    async getAllTasks() {
+      const response = await TasksService.getAll();
+      this.tasksData = response.data;
     },
   },
 };

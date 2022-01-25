@@ -61,9 +61,7 @@ export default {
       type: String,
       default: "Example",
     },
-    chiptext: {
-      default: "Chip text",
-    },
+    chiptext: {},
     color: {
       type: String,
       default: "primary",
