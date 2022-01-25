@@ -65,7 +65,7 @@
                 </v-list-item-action>
               </v-list-item>
               <v-divider
-                v-if="index < tasks.length - 1"
+                v-if="index < getTasks.length - 1"
                 :key="index"
               ></v-divider>
             </template>
@@ -85,6 +85,7 @@
         v-model="dialogTask"
         :task.sync="taskSelected"
         :isFormEdit.sync="isFormEdit"
+        @reload="getAllTasks"
       ></add-task-form>
       <detail-task-form
         v-model="dialogDetailTask"
@@ -93,7 +94,10 @@
       ></detail-task-form>
     </template>
     <template #sectionDeleteDialog>
-      <h-dialogo-eliminacion :activo="dialogDelete"></h-dialogo-eliminacion>
+      <h-dialogo-eliminacion
+        :activo="dialogDelete"
+        @eliminar="onResponseEliminarForm"
+      ></h-dialogo-eliminacion>
     </template>
   </base-template>
 </template>
@@ -119,98 +123,15 @@ export default {
     dialogDetailTask: false,
     dialogDelete: false,
     isFormEdit: false,
+    taskToDelete: null,
 
     tasksData: [],
-    tasks: [
-      {
-        title: "Hacer front-end",
-        is_completed: true,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description:
-          "Hacerlo bien pa pasar mucho texto, mucho texto, prueba prueba prueba ",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 1,
-      },
-      {
-        title: "TAREA 2",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["324", "1", "2"],
-        task_id: 2,
-      },
-      {
-        title: "TAREA 3",
-        is_completed: true,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["3456", "DFG", "5"],
-        task_id: 3,
-      },
-      {
-        title: "TAREA 4",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 4,
-      },
-      {
-        title: "TAREA 4123123",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 5,
-      },
-      {
-        title: "TAREA 41231234",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 6,
-      },
-      {
-        title: "TAREA 41235235",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 7,
-      },
-      {
-        title: "TAREA 44356",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 8,
-      },
-      {
-        title: "TAREA 674",
-        is_completed: false,
-        due_date: "2022-01-15",
-        comments: "Realizar el front end para pasar la prueba final",
-        description: "Hacerlo bien pa pasar",
-        tags: ["Fácil", "Rápido", "Bonito"],
-        task_id: 9,
-      },
-    ],
   }),
-  mounted() {
+  created() {
     this.getAllTasks();
   },
   computed: {
-     getTasks() {
+    getTasks() {
       return this.tasksData;
     },
   },
@@ -228,10 +149,21 @@ export default {
       this.dialogDetailTask = true;
       this.isFormEdit = true;
       this.taskSelected = { ...task };
-      console.log("El detalle tiene", this.taskSelected);
     },
-    onClickDeleteTask() {
+    onClickDeleteTask(task) {
       this.dialogDelete = true;
+      this.taskToDelete = task.id;
+    },
+    onResponseEliminarForm(valor) {
+      this.dialogDelete = false;
+      if (valor) {
+        this.deleteTask();
+      } else {
+        this.taskToDelete = null;
+      }
+    },
+    async deleteTask() {
+      TasksService.delete(task_id);
     },
     async getAllTasks() {
       const response = await TasksService.getAll();

@@ -106,7 +106,7 @@ export default {
     },
     loadInformation() {
       this.taskForm = this.task;
-      console.log(this.taskDetail);
+      console.log(this.taskForm);
     },
   },
   mounted() {

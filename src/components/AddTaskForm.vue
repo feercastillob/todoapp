@@ -25,8 +25,9 @@
             </v-col>
             <v-col cols="12" md="6" sm="6">
               <h-date-field
-                label="Fecha"
+                label="Fecha*"
                 v-model="taskForm.due_date"
+                :rules="[$constantes.reglas.base.required]"
               ></h-date-field>
             </v-col>
             <v-col cols="12" md="6" sm="6">
@@ -59,6 +60,8 @@
         <v-btn color="accent" text @click="onClickSaveForm">Guardar </v-btn>
       </v-card-actions>
     </v-card>
+    <h-alert type="success" :val="dialogAlertSuccess"></h-alert>
+    <h-alert type="error" :val="dialogAlertError"></h-alert>
   </v-dialog>
 </template>
 
@@ -86,6 +89,8 @@ export default {
   },
   data: () => ({
     esFormularioValido: true,
+    dialogAlertSuccess: false,
+    dialogAlertError: false,
     isFormVisible: false,
 
     taskForm: {
@@ -117,15 +122,21 @@ export default {
       Object.keys(this.taskForm).forEach((key) => {
         params.append(key, this.taskForm[key]);
       });
-
       TasksService.registrar(params);
       this.onClickCancelForm();
     },
     async updateTask() {
+      // const params = new URLSearchParams();
+      // Object.keys(this.taskForm).forEach((key) => {
+      //   params.append(key, this.taskForm[key]);
+      // });
+      var task_id = this.taskForm.id;
+      TasksService.actualizar(task_id);
       this.onClickCancelForm();
     },
     loadInformation() {
       this.taskForm = this.task;
+      console.log(this.task);
     },
   },
   mounted() {
